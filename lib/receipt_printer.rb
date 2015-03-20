@@ -14,7 +14,9 @@ class ReceiptPrinter
 
   def print
     output_items
+    output_divider
     output_subtotals
+    output_divider
     output_total
   end
 
@@ -23,25 +25,8 @@ class ReceiptPrinter
   attr_reader :output, :items
 
   def output_items
-    item_lines
-    divider_line
-  end
-
-  def output_subtotals
-    subtotal_line
-    tax_line
-    divider_line
-  end
-
-  def item_lines
     items.each do |item|
       output.puts "#{item}: #{sprintf('$%.2f', item_cost(item))}"
-    end
-  end
-
-  def subtotal
-    @_subtotal ||= items.reduce(0) do |sum, item|
-      sum + item_cost(item).to_i
     end
   end
 
@@ -49,8 +34,13 @@ class ReceiptPrinter
     COST[item]
   end
 
-  def divider_line
+  def output_divider
     output.puts divider
+  end
+
+  def output_subtotals
+    subtotal_line
+    tax_line
   end
 
   def subtotal_line
@@ -59,6 +49,12 @@ class ReceiptPrinter
 
   def tax_line
     output_with label: "tax", cost: subtotal * TAX
+  end
+
+  def subtotal
+    @_subtotal ||= items.reduce(0) do |sum, item|
+      sum + item_cost(item).to_i
+    end
   end
 
   def output_total
